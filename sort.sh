@@ -54,7 +54,7 @@ C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do
     ready=false
     if ! [ "$id" = "" ]; then
         # This regex finds folders that have the $id between square brackets (no matter the location). It captures the full folder name.
-        folder=$(ls -d */ | grep -m1 -P ".*\[$id\].*")
+        folder=$(ls -d */ 2> /dev/null | grep -m1 -P ".*\[$id\].*")
         if ! [ "$folder" = "" ]; then
             mv "$file" "$folder$file"
             ready=true

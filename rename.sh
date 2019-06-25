@@ -61,7 +61,7 @@ safe_name () {
 #---------------------------------------------------------------
 cd ..
 # This regex finds folders whose names end with a number. Captures only the number.
-ls -d */ | grep -oP "\d+(?=/$)" | while read -r folder; do
+ls -d */ 2> /dev/null | grep -oP "\d+(?=/$)" | while read -r folder; do
     id="$folder"
     # NOTE: for some apps, the name obtained through the "applist" doesn't match the one obtained by "scraping" the HTML (so, the order in which this methods are called does affect the end result).
     name=$(app_name_applist "$id" || app_name_scraping "$id" || app_name_steamdb "$id")
