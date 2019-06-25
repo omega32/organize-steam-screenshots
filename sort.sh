@@ -26,7 +26,7 @@ app_name_scraping () {
 
 app_name_applist () {
     local id=$1
-    local result=$(cat ./Scripts/applist.json | jq -r ".applist.apps[] | select(.appid == $id) | .name")
+    local result=$(cat "$(dirname $0)/applist.json" | jq -r ".applist.apps[] | select(.appid == $id) | .name")
     [ "$result" = "" ] && return 1 || echo "$result"
 }
 
