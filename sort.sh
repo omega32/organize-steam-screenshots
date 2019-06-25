@@ -69,12 +69,11 @@ C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do
         if ! [ "$name" = "" ]; then
             safename=$(safe_name "$name")
             newfolder="$safename [$id]"
-            echo "$newfolder"
-            mkdir "$newfolder"; mv "$file" "$_"
         else
-            echo "$id"
-            mkdir "$id"; mv "$file" "$_"
+            newfolder="[$id]"
         fi
+        echo "$newfolder"
+        mkdir "$newfolder"; mv "$file" "$_"
     fi
 done
 
