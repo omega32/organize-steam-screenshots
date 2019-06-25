@@ -8,6 +8,6 @@
 # - https://partner.steamgames.com/doc/webapi/ISteamApps <- Steamworks API Documentation
 #==============================================================================
 
-curl https://api.steampowered.com/ISteamApps/GetAppList/v2/ > "$(dirname $0)/applist.json"
+curl https://api.steampowered.com/ISteamApps/GetAppList/v2/ > "$(dirname "$0")/applist.json"
 
 exit 0
