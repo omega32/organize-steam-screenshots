@@ -1,4 +1,4 @@
 @ECHO OFF
-sh ./update-app-list.sh
+sh "%~dp0update-app-list.sh"
 ECHO.
 PAUSE

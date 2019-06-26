@@ -1,4 +1,4 @@
 @ECHO OFF
-sh ./rename.sh
+sh "%~dp0rename.sh"
 ECHO.
 PAUSE
