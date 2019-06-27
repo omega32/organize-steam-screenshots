@@ -1,4 +1,4 @@
 @ECHO OFF
-sh "%~dp0sort.sh"
+sh "%~dp0sort.sh" %*
 ECHO.
 PAUSE

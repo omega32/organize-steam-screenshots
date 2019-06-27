@@ -38,14 +38,15 @@ safe_name () {
     echo "$result"
 }
 
-#---------------------------------------------------------------
-# script
-#---------------------------------------------------------------
-cd ..
-# full path to avoid using the Windows built-in "find".
-C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do
+move_file () {
+    local f_path=$1
+    local f_name=$(basename "$f_path")
+
     # This regex extracts the id (number at the beginning of the screenshot filename). Captures only the number.
-    id=$(echo "$file" | grep -oP "(?<=/)[\d]+")
+    id=$(echo "$f_name" | grep -oP "^[\d]+")
+
+    [ "$id" == "" ] && return # invalid screenshot filename
+
     # First, check if the folder already exists. If there are multiple folders, the first one is taken (first one returned by find).
     # NOTE (multiple IDs in one folder):
     # - The folder names can be manually customized. Any name is allowed, as long as the game ID is between square brackets.
@@ -56,7 +57,7 @@ C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do
         # This regex finds folders that have the $id between square brackets (no matter the location). It captures the full folder name.
         folder=$(ls -d */ 2> /dev/null | grep -m1 -P ".*\[$id\].*")
         if ! [ "$folder" = "" ]; then
-            mv "$file" "$folder$file"
+            mv "$f_path" "$folder$f_name"
             ready=true
         fi
     fi
@@ -65,16 +66,27 @@ C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do
     # NOTE (non-steam apps): if no name can be retrieved, it may be a non-steam app; and there is the possibility that it's a new ID for an old app. This will happen if the non-steam app is removed from the library and added again.
     # In that case, there may already exist a folder for the same app but with the old ID. TODO?: detect non-steam apps (ID > certain threshold) and do not create new folders?.
     if [ "$ready" = "false" ]; then
-        name=$(app_name_applist "$id" || app_name_scraping "$id" || app_name_steamdb "$id")
-        if ! [ "$name" = "" ]; then
-            safename=$(safe_name "$name")
+        game=$(app_name_applist "$id" || app_name_scraping "$id" || app_name_steamdb "$id")
+        if ! [ "$game" = "" ]; then
+            safename=$(safe_name "$game")
             newfolder="$safename [$id]"
         else
             newfolder="[$id]"
         fi
         echo "$newfolder"
-        mkdir "$newfolder"; mv "$file" "$_"
+        mkdir "$newfolder"; mv "$f_path" "$_"
     fi
-done
+}
+
+#---------------------------------------------------------------
+# script
+#---------------------------------------------------------------
+cd ..
+if [ "$1" = "" ]; then
+    # full path to avoid using the Windows built-in "find".
+    C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do move_file "$file"; done
+else
+    for file in "$@"; do move_file "$(cygpath -m "$file")"; done
+fi
 
 exit 0
