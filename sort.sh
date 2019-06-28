@@ -86,7 +86,7 @@ if [ "$1" = "" ]; then
     # full path to avoid using the Windows built-in "find".
     C:/cygwin/bin/find ./ -maxdepth 1 -type f -name "*.png" | while read -r file; do move_file "$file"; done
 else
-    for file in "$@"; do move_file "$(cygpath -m "$file")"; done
+    for file in "$@"; do move_file "$file"; done
 fi
 
 exit 0
