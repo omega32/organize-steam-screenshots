@@ -73,7 +73,7 @@ move_file () {
         else
             newfolder="[$id]"
         fi
-        echo "$newfolder"
+        echo new folder created: "$newfolder"
         mkdir "$newfolder"; mv "$f_path" "$_"
     fi
 }
