@@ -7,6 +7,8 @@
 # The format of the existing folders may be anything as long as the gameid is part of the name and is between square brackets ([gameid]).
 #==============================================================================
 
+declare -A stats=()
+
 #---------------------------------------------------------------
 # methods
 #---------------------------------------------------------------
@@ -38,6 +40,24 @@ safe_name () {
     echo "$result"
 }
 
+increase_stat () {
+    local game="$1"
+    local count="${stats[$game]}"
+    [[ -z "$count" ]] && count=0
+    (( count++ ))
+    stats+=(["$game"]=$count)
+}
+
+print_stats () {
+    local count="${#stats[*]}"
+    if [ "$count" -gt "0" ]; then
+        printf '\nMoved files:\n'
+        for key in "${!stats[@]}"; do
+            printf '> %s: [%s]\n' "$key" "${stats[$key]}"
+        done
+    fi
+}
+
 move_file () {
     local f_path=$1
     local f_name=$(basename "$f_path")
@@ -58,6 +78,7 @@ move_file () {
         folder=$(ls -d */ 2> /dev/null | grep -m1 -P ".*\[$id\].*")
         if ! [ "$folder" = "" ]; then
             mv "$f_path" "$folder$f_name"
+            increase_stat "$(basename "$folder")"
             ready=true
         fi
     fi
@@ -73,8 +94,9 @@ move_file () {
         else
             newfolder="[$id]"
         fi
-        echo new folder created: "$newfolder"
+        echo folder created: "$newfolder"
         mkdir "$newfolder"; mv "$f_path" "$_"
+        increase_stat "$newfolder"
     fi
 }
 
@@ -88,5 +110,7 @@ if [ "$1" = "" ]; then
 else
     for file in "$@"; do move_file "$file"; done
 fi
+
+print_stats
 
 exit 0
