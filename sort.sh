@@ -34,9 +34,9 @@ app_name_applist () {
 
 safe_name () {
     local name=$1
-    local result=$(echo "$name" | sed 's/[\\/:*?"<>|]/_/g') # remove invalid characters in file names.
-    local result=$(echo "$result" | sed "s/&amp;/\&/g")     # &amp; -> & (html encoded). Useful when getting the name with HTML "scraping".
-    local result=$(echo "$result" | xargs)                  # remove trailing and leading spaces [https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable].
+    local result=$(echo "$name" | sed 's/[\\/:*?"<>|]/_/g')          # remove invalid characters in file names.
+    local result=$(echo "$result" | sed "s/&amp;/\&/g")              # &amp; -> & (html encoded). Useful when getting the name with HTML "scraping".
+    local result=$(echo "$result" | sed -E "s/(^[ \t]*|[ \t]*$)//g") # remove trailing and leading spaces. Solution constructed with the help of [https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable]. NOTE: the "xargs" solutions have problems when the name has single or double quotes.
     echo "$result"
 }
 
